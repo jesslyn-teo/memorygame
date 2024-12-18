@@ -17,6 +17,7 @@ function App() {
   const [turnCount, setTurnCount] = useState(0);
   const [firstChoice, setFirstChoice] = useState(null);
   const [secondChoice, setSecondChoice] = useState(null);
+  const [disabled, setDisabled] = useState(false);
 
   // used to duplicate , duplicate and identify the cards
   const shuffleCards = () => {
@@ -36,6 +37,8 @@ function App() {
   // comparing cards 
   useEffect(() => {
     if(firstChoice && secondChoice) {
+      setDisabled(true); 
+      
       if(firstChoice.src === secondChoice.src) {
         setCards(prevCards => {
           return prevCards.map(card => {
@@ -48,18 +51,17 @@ function App() {
         });
         resetTurn();
       } else {
-        resetTurn();
+        setTimeout(() => resetTurn(), 1000);
       }
     }
   }, [firstChoice, secondChoice])
-
-  console.log(cards)
 
   // reset choices and increase turn count 
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
     setTurnCount(prevTurns => prevTurns + 1);
+    setDisabled(false);
   }
 
   return (
@@ -73,6 +75,8 @@ function App() {
             key={card.id} 
             card={card} 
             handleChoice={handleChoice} 
+            flipped={card === firstChoice || card === secondChoice || card.matched}
+            disabled={disabled}
           />
         ))}
       </div>
